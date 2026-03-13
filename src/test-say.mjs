@@ -10,9 +10,12 @@ if (!apiKey) {
 const outDir = new URL('../out/', import.meta.url);
 await fs.mkdir(outDir, { recursive: true });
 
-const res = await fetch(`https://texttospeech.googleapis.com/v1/text:synthesize?key=${encodeURIComponent(apiKey)}`, {
+const res = await fetch('https://texttospeech.googleapis.com/v1/text:synthesize', {
   method: 'POST',
-  headers: { 'content-type': 'application/json' },
+  headers: {
+    'content-type': 'application/json',
+    'x-goog-api-key': apiKey,
+  },
   body: JSON.stringify({
     input: { text: 'hello from google tts' },
     voice: { languageCode: 'en-US', name: 'en-US-Neural2-F' },

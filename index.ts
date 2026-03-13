@@ -53,7 +53,7 @@ const DEFAULT_GEMINI_MODEL = "gemini-2.5-flash-preview-tts";
 const DEFAULT_AUTO_VOICE_GEMINI_MODEL = "gemini-2.5-pro-preview-tts";
 const DEFAULT_GEMINI_VOICE = "Leda";
 const DEFAULT_GEMINI_STYLE =
-  "请用温柔、静静聆听的陪伴口吻，像在和对方轻声对话，不要像朗读稿件。语气不评判，带一点自然的好奇与回应感，节奏放松，停顿自然。";
+  "请用自然、温和、专业的口吻表达。语气不评判，带一点自然的回应感，节奏自然，更像真实对话，不像朗读稿件。";
 const DEFAULT_AUTO_VOICE_ACCOUNTS = ["your-bot-account-id"] as const;
 const LEGACY_AUTO_VOICE_PRIMARY_ACCOUNT_ID = DEFAULT_AUTO_VOICE_ACCOUNTS[0];
 const GEMINI_TTS_RETRY_DELAYS_MS = [300, 1000];
@@ -880,10 +880,13 @@ async function synthesizeGemini(
   style = "",
 ): Promise<Buffer> {
   const res = await fetch(
-    `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${encodeURIComponent(apiKey)}`,
+    `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`,
     {
       method: "POST",
-      headers: { "content-type": "application/json" },
+      headers: {
+        "content-type": "application/json",
+        "x-goog-api-key": apiKey,
+      },
       body: JSON.stringify({
         contents: [{ parts: [{ text: buildGeminiSpeechPrompt(text, style) }] }],
         generationConfig: {

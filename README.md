@@ -84,7 +84,7 @@ Minimal example:
   "accounts": {
     "your-bot-account-id": {
       "defaultVoice": "Leda",
-      "defaultStyle": "请用温柔、专业的心理咨询师口吻，像在面对面轻声说话。以静静聆听、不过度打扰的方式回应，语气不评判，带着温和的好奇与陪伴感，更像真实对话，不像朗读稿件。节奏自然，句间留一点呼吸感。"
+      "defaultStyle": "请用自然、温和、专业的口吻表达。语气不评判，带一点自然的回应感，节奏自然，更像真实对话，不像朗读稿件。"
     }
   }
 }
@@ -111,8 +111,10 @@ The plugin can also read `gemini_api_key` from a local `google-tts-tokens.json`,
 Run the OAuth setup once:
 
 ```bash
-node ./src/oauth-setup.mjs
+node ./src/oauth-setup.mjs /path/to/client_secret_*.json
 ```
+
+You can also set `GOOGLE_OAUTH_CLIENT_SECRET_PATH` instead of passing the path inline.
 
 This writes `google-tts-tokens.json` in the plugin directory. Keep that file private.
 
@@ -130,7 +132,7 @@ This writes `google-tts-tokens.json` in the plugin directory. Keep that file pri
 - `/gtts say <text>`
 - `/gtts say --pro <text>`
 - `/gtts say --flash <text>`
-- `/gtts say --style '温柔一点' <text>`
+- `/gtts say --style '自然一点，像对话' <text>`
 - `/gtts say -e cloud <text>`
 
 ## Behavior notes
@@ -140,6 +142,7 @@ This writes `google-tts-tokens.json` in the plugin directory. Keep that file pri
 - Slash-command replies such as `/new` and `/voice` are skipped by auto voice
 - Telegram voice bubbles are sent directly by the plugin after text delivery
 - Manual `/gtts` still returns media via the normal command reply path
+- Gemini requests use the `x-goog-api-key` header instead of placing the API key in the URL
 
 ## Files to keep out of git
 

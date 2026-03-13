@@ -5,8 +5,11 @@
  * Usage:
  *   node src/oauth-setup.mjs [path-to-client-secret.json]
  *
- * Default client secret path:
- *   ~/Downloads/client_secret_91567999493-*.apps.googleusercontent.com.json
+ * Recommended:
+ *   node src/oauth-setup.mjs /path/to/client_secret_*.json
+ *
+ * Optional environment variable:
+ *   GOOGLE_OAUTH_CLIENT_SECRET_PATH=/path/to/client_secret_*.json
  */
 
 import fs from "node:fs/promises";
@@ -21,18 +24,48 @@ const SCOPES = ["https://www.googleapis.com/auth/cloud-platform"];
 const REDIRECT_PORT = 8085;
 const REDIRECT_URI = `http://localhost:${REDIRECT_PORT}`;
 
-async function findClientSecret(hint) {
-  if (hint) return JSON.parse(await fs.readFile(hint, "utf8"));
+function trim(value) {
+  return typeof value === "string" ? value.trim() : "";
+}
 
-  // Auto-discover from ~/Downloads
-  const dlDir = path.join(process.env.HOME, "Downloads");
-  const files = await fs.readdir(dlDir);
+async function readJsonFile(filePath) {
+  return JSON.parse(await fs.readFile(filePath, "utf8"));
+}
+
+async function findClientSecretInDir(dirPath) {
+  const files = await fs.readdir(dirPath);
   const match = files.find(
     (f) => f.startsWith("client_secret_") && f.endsWith(".json"),
   );
-  if (!match) throw new Error("No client_secret_*.json found in ~/Downloads");
-  console.log(`Found: ${path.join(dlDir, match)}`);
-  return JSON.parse(await fs.readFile(path.join(dlDir, match), "utf8"));
+  if (!match) return null;
+  return path.join(dirPath, match);
+}
+
+async function findClientSecret(hint) {
+  const explicitPath = trim(hint) || trim(process.env.GOOGLE_OAUTH_CLIENT_SECRET_PATH);
+  if (explicitPath) {
+    console.log(`Using client secret: ${explicitPath}`);
+    return await readJsonFile(explicitPath);
+  }
+
+  const searchDirs = [
+    process.cwd(),
+    path.join(__dirname, ".."),
+  ];
+  for (const dirPath of searchDirs) {
+    try {
+      const discovered = await findClientSecretInDir(dirPath);
+      if (!discovered) continue;
+      console.log(`Found client secret: ${discovered}`);
+      return await readJsonFile(discovered);
+    } catch {
+      // Ignore unreadable directories and continue searching.
+    }
+  }
+
+  throw new Error(
+    "Client secret JSON not found. Pass a path to node src/oauth-setup.mjs /path/to/client_secret.json or set GOOGLE_OAUTH_CLIENT_SECRET_PATH.",
+  );
 }
 
 function openBrowser(url) {

@@ -84,7 +84,7 @@ cp voice-config.example.json voice-config.json
   "accounts": {
     "your-bot-account-id": {
       "defaultVoice": "Leda",
-      "defaultStyle": "请用温柔、专业的心理咨询师口吻，像在面对面轻声说话。以静静聆听、不过度打扰的方式回应，语气不评判，带着温和的好奇与陪伴感，更像真实对话，不像朗读稿件。节奏自然，句间留一点呼吸感。"
+      "defaultStyle": "请用自然、温和、专业的口吻表达。语气不评判，带一点自然的回应感，节奏自然，更像真实对话，不像朗读稿件。"
     }
   }
 }
@@ -111,8 +111,10 @@ cp voice-config.example.json voice-config.json
 首次使用前执行：
 
 ```bash
-node ./src/oauth-setup.mjs
+node ./src/oauth-setup.mjs /path/to/client_secret_*.json
 ```
+
+你也可以设置 `GOOGLE_OAUTH_CLIENT_SECRET_PATH`，不把路径写在命令行里。
 
 这会在插件目录里生成 `google-tts-tokens.json`。这个文件必须保密。
 
@@ -130,7 +132,7 @@ node ./src/oauth-setup.mjs
 - `/gtts say <text>`
 - `/gtts say --pro <text>`
 - `/gtts say --flash <text>`
-- `/gtts say --style '温柔一点' <text>`
+- `/gtts say --style '自然一点，像对话' <text>`
 - `/gtts say -e cloud <text>`
 
 ## 行为说明
@@ -140,6 +142,7 @@ node ./src/oauth-setup.mjs
 - `/new`、`/voice` 这类 slash 指令的回复不会自动转语音
 - Telegram 语音气泡由插件在文字发送成功后直接补发
 - 手动 `/gtts` 仍然走普通命令回复链路返回媒体
+- Gemini 请求会使用 `x-goog-api-key` 请求头，不把 API key 放进 URL
 
 ## 不要提交到 Git 的文件
 
