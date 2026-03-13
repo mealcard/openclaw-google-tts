@@ -16,7 +16,6 @@ import fs from "node:fs/promises";
 import path from "node:path";
 import { createServer } from "node:http";
 import { fileURLToPath } from "node:url";
-import { exec } from "node:child_process";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const TOKEN_PATH = path.join(__dirname, "..", "google-tts-tokens.json");
@@ -66,16 +65,6 @@ async function findClientSecret(hint) {
   throw new Error(
     "Client secret JSON not found. Pass a path to node src/oauth-setup.mjs /path/to/client_secret.json or set GOOGLE_OAUTH_CLIENT_SECRET_PATH.",
   );
-}
-
-function openBrowser(url) {
-  const cmd =
-    process.platform === "darwin"
-      ? `open "${url}"`
-      : process.platform === "win32"
-        ? `start "${url}"`
-        : `xdg-open "${url}"`;
-  exec(cmd);
 }
 
 async function waitForAuthCode() {
@@ -154,7 +143,8 @@ authUrl.searchParams.set("access_type", "offline");
 authUrl.searchParams.set("prompt", "consent");
 
 console.log("\nOpening browser for Google authorization...\n");
-openBrowser(authUrl.toString());
+console.log(authUrl.toString());
+console.log("\nOpen the URL above in your browser to continue.\n");
 
 const code = await waitForAuthCode();
 console.log("Got authorization code, exchanging for tokens...");

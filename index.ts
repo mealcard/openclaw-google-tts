@@ -449,7 +449,7 @@ const AUTO_VOICE_META_REPLY_PATTERNS = [
   /^这个语音命令当前未对这个 bot 开启/u,
 ];
 const PLUGIN_SKIP_COUNT_COMMANDS = new Set([
-  "voice",
+  "autovoice",
   "voice_style",
   "voice_voice",
   "voicevoice",
@@ -1158,13 +1158,11 @@ const plugin = {
       });
     };
 
-    registerVoiceCommand("voice", "Toggle Telegram voice bubble replies for the current chat", {
-      telegram: "qvoice",
-    }, async (ctx) => {
+    registerVoiceCommand("autovoice", "Toggle Telegram voice bubble replies for the current chat", void 0, async (ctx) => {
       const params = resolveStateParamsFromCommand(ctx);
       const stateKey = buildVoiceStateKey(params) ?? buildLegacyVoiceStateKey(params) ?? "<missing>";
       api.logger.info(
-        `[google-tts] /voice invoked channel=${trim(ctx.channelId) || trim(ctx.channel)} ` +
+        `[google-tts] /autovoice invoked channel=${trim(ctx.channelId) || trim(ctx.channel)} ` +
         `account=${trim(ctx.accountId) || "-"} from=${trim(ctx.from) || "-"} ` +
         `to=${trim(ctx.to) || "-"} thread=${ctx.messageThreadId ?? "-"} key=${stateKey} ` +
         `args=${JSON.stringify(trim(ctx.args))}`,

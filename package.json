@@ -18,10 +18,6 @@
     "voice-config.example.json"
   ],
   "scripts": {
-    "oauth-setup": "node ./src/oauth-setup.mjs",
-    "test:say": "node ./src/test-say.mjs"
-  },
-  "dependencies": {
-    "openclaw": "^2026.3.2"
+    "oauth-setup": "node ./src/oauth-setup.mjs"
   }
 }

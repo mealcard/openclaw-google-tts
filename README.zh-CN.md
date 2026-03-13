@@ -8,9 +8,11 @@
 - Google Cloud Text-to-Speech
 - Telegram 自动语音气泡回复
 
-它支持手动 `/gtts` 合成，也支持聊天级别的 `/voice` 模式。开启 `/voice` 后，bot 会先发送正常文字，再补发一条对应的 Telegram 语音气泡。
+它支持手动 `/gtts` 合成，也支持聊天级别的 `/autovoice` 模式。开启 `/autovoice` 后，bot 会先发送正常文字，再补发一条对应的 Telegram 语音气泡。
 
 这个插件可以按 bot 账号做范围控制。哪些 bot 允许使用自动语音，由 `voice-config.json` 决定。
+
+公开版仓库使用 `/autovoice` 而不是 `/voice`。原因是有些 OpenClaw 安装已经把 `/voice` 留给了内建 `talk-voice` 插件，改成 `/autovoice` 才能避免安装冲突。
 
 许可证：MIT。见 [LICENSE](./LICENSE)。
 
@@ -66,7 +68,7 @@ cp voice-config.example.json voice-config.json
 
 配置含义：
 
-- `autoVoiceAccounts` 用来限制哪些 bot 可以使用 `/voice`
+- `autoVoiceAccounts` 用来限制哪些 bot 可以使用 `/autovoice`
 - `autoVoiceModel` 可选 `gemini-2.5-flash-preview-tts` 或 `gemini-2.5-pro-preview-tts`
 - `accounts.<accountId>.defaultVoice` 和 `defaultStyle` 是按 bot 设置的默认值
 
@@ -92,8 +94,8 @@ node ./src/oauth-setup.mjs /path/to/client_secret_*.json
 
 ## 命令
 
-- `/voice`：切换当前 Telegram 对话的自动语音
-- `/voice on|off|status`
+- `/autovoice`：切换当前 Telegram 对话的自动语音
+- `/autovoice on|off|status`
 - `/voice_style <文本>`：覆盖当前对话的 style
 - `/voice_style 默认`：恢复为账号默认 style
 - `/voice_voice <voice>`：覆盖当前对话的 voice
@@ -111,7 +113,7 @@ node ./src/oauth-setup.mjs /path/to/client_secret_*.json
 
 - 自动语音只在 Telegram 上运行，并且只对 `autoVoiceAccounts` 中的账号生效
 - 如果回复内容是 JSON，只会朗读 `response` 字段
-- `/new`、`/voice` 这类 slash 指令的回复不会自动转语音
+- `/new`、`/autovoice` 这类 slash 指令的回复不会自动转语音
 - Telegram 语音气泡由插件在文字发送成功后直接补发
 - Gemini 请求使用 `x-goog-api-key` 请求头，不把 API key 放在 URL 中
 - 不要提交 `google-tts-tokens.json`、`voice-state.json`、`voice-config.json` 或 `out/`

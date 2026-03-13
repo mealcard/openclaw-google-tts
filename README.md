@@ -8,9 +8,11 @@ English. 中文说明见 [README.zh-CN.md](./README.zh-CN.md).
 - Google Cloud Text-to-Speech
 - Telegram auto voice-bubble replies
 
-It supports manual `/gtts` synthesis and a chat-level `/voice` mode. When `/voice` is enabled, the bot sends its normal text reply first, then sends a Telegram voice bubble for the same reply.
+It supports manual `/gtts` synthesis and a chat-level `/autovoice` mode. When `/autovoice` is enabled, the bot sends its normal text reply first, then sends a Telegram voice bubble for the same reply.
 
 The plugin is designed to be scoped to specific bot accounts. You decide which bots can use auto voice in `voice-config.json`.
+
+This public version uses `/autovoice` instead of `/voice`. Some OpenClaw installs already reserve `/voice` for the built-in `talk-voice` plugin, so `/autovoice` is the conflict-free command that works across installs.
 
 License: MIT. See [LICENSE](./LICENSE).
 
@@ -66,7 +68,7 @@ Example:
 
 What the config does:
 
-- `autoVoiceAccounts` limits `/voice` to specific bot accounts
+- `autoVoiceAccounts` limits `/autovoice` to specific bot accounts
 - `autoVoiceModel` can be `gemini-2.5-flash-preview-tts` or `gemini-2.5-pro-preview-tts`
 - `accounts.<accountId>.defaultVoice` and `defaultStyle` set per-bot defaults
 
@@ -92,8 +94,8 @@ This creates `google-tts-tokens.json` in the plugin directory. Keep that file pr
 
 ## Commands
 
-- `/voice` toggles auto voice for the current Telegram chat
-- `/voice on|off|status`
+- `/autovoice` toggles auto voice for the current Telegram chat
+- `/autovoice on|off|status`
 - `/voice_style <text>` overrides style for the current chat
 - `/voice_style 默认` resets style to the account default
 - `/voice_voice <voice>` overrides voice for the current chat
@@ -111,7 +113,7 @@ This creates `google-tts-tokens.json` in the plugin directory. Keep that file pr
 
 - Auto voice only runs on Telegram and only for accounts listed in `autoVoiceAccounts`
 - If a reply is JSON, the plugin only speaks the `response` field
-- Replies to slash commands such as `/new` and `/voice` are not spoken
+- Replies to slash commands such as `/new` and `/autovoice` are not spoken
 - Telegram voice bubbles are sent directly by the plugin after text delivery
 - Gemini requests use the `x-goog-api-key` header instead of putting the API key in the URL
 - Do not commit `google-tts-tokens.json`, `voice-state.json`, `voice-config.json`, or `out/`
