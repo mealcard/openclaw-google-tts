@@ -6,13 +6,11 @@
 
 - Gemini TTS
 - Google Cloud Text-to-Speech
-- Telegram 自动语音气泡回复
+- Telegram 语音气泡回复
 
-它支持手动 `/gtts` 合成，也支持聊天级别的 `/autovoice` 模式。开启 `/autovoice` 后，bot 会先发送正常文字，再补发一条对应的 Telegram 语音气泡。
+你可以用 `/gtts` 手动合成语音，也可以用 `/autovoice` 让 Telegram bot 先发文字，再补发同一条回复的语音气泡。
 
-这个插件可以按 bot 账号做范围控制。哪些 bot 允许使用自动语音，由 `voice-config.json` 决定。
-
-公开版仓库使用 `/autovoice` 而不是 `/voice`。原因是有些 OpenClaw 安装已经把 `/voice` 留给了内建 `talk-voice` 插件，改成 `/autovoice` 才能避免安装冲突。
+公开版仓库使用 `/autovoice` 而不是 `/voice`，因为有些 OpenClaw 安装已经把 `/voice` 留给了内建功能。
 
 许可证：MIT。见 [LICENSE](./LICENSE)。
 
@@ -24,20 +22,7 @@
 - 认证方式二选一：
   - Gemini TTS 使用 `GOOGLE_API_KEY`
   - Google Cloud TTS 使用 OAuth 凭证
-
-为什么需要 `ffmpeg`：
-
-- Gemini TTS 返回的是原始 PCM 音频，不是可以直接发送的语音文件
-- 插件会在本地用 `ffmpeg` 把 PCM 转成可用格式
-- 手动 `/gtts` 输出会转成 `mp3`
-- Telegram 自动语音回复会转成 `ogg/opus`，因为这是 Telegram 语音气泡最稳的格式
-
-这里的 `ogg/opus` 是做什么的：
-
-- `ogg` 是封装格式
-- `opus` 是里面的语音编码
-- Telegram 的 voice note 最适合用 `ogg/opus`，这样更容易显示成语音气泡，而不是普通音频文件
-- 这一步只处理插件本地生成的音频文件，不是拿来执行任意 shell 任务
+- `ffmpeg` 用来在本地转换音频格式
 
 ## 安装
 
@@ -59,7 +44,7 @@ openclaw gateway --force
 
 ## 配置
 
-先复制示例配置，再按你的 bot 修改：
+先复制示例配置，再把 `your-bot-account-id` 改成你的 bot 账号 ID：
 
 ```bash
 cp voice-config.example.json voice-config.json
@@ -82,9 +67,10 @@ cp voice-config.example.json voice-config.json
 
 配置含义：
 
-- `autoVoiceAccounts` 用来限制哪些 bot 可以使用 `/autovoice`
-- `autoVoiceModel` 可选 `gemini-2.5-flash-preview-tts` 或 `gemini-2.5-pro-preview-tts`
-- `accounts.<accountId>.defaultVoice` 和 `defaultStyle` 是按 bot 设置的默认值
+- `autoVoiceAccounts`：哪些 bot 可以使用自动语音
+- `autoVoiceModel`：`gemini-2.5-flash-preview-tts` 或 `gemini-2.5-pro-preview-tts`
+- `accounts.<accountId>.defaultVoice`：这个 bot 的默认 voice
+- `accounts.<accountId>.defaultStyle`：这个 bot 的默认 style
 
 ## 认证
 
@@ -106,6 +92,16 @@ node ./src/oauth-setup.mjs /path/to/client_secret_*.json
 
 执行后会在插件目录生成 `google-tts-tokens.json`。这个文件必须保密。
 
+## 使用步骤
+
+1. 安装插件。
+2. 创建 `voice-config.json`。
+3. 配置 Gemini 或 Google Cloud 认证。
+4. 重启 gateway。
+5. 在 Telegram 里和目标 bot 对话。
+6. 在该对话中发送 `/autovoice on`。
+7. 再发一条普通消息，bot 应该会先回文字，再补一条语音气泡。
+
 ## 命令
 
 - `/autovoice`：切换当前 Telegram 对话的自动语音
@@ -125,10 +121,8 @@ node ./src/oauth-setup.mjs /path/to/client_secret_*.json
 
 ## 说明
 
-- 自动语音只在 Telegram 上运行，并且只对 `autoVoiceAccounts` 中的账号生效
+- 自动语音只在 Telegram 上运行
+- 自动语音只对 `autoVoiceAccounts` 中的 bot 生效
 - 如果回复内容是 JSON，只会朗读 `response` 字段
-- `/new`、`/autovoice` 这类 slash 指令的回复不会自动转语音
-- Telegram 语音气泡由插件在文字发送成功后直接补发
-- Gemini 音频会从 PCM 转成 `ogg/opus` 发送语音气泡，手动文件输出则转成 `mp3`
-- Gemini 请求使用 `x-goog-api-key` 请求头，不把 API key 放在 URL 中
+- `/new` 这类 slash 指令的回复不会自动转语音
 - 不要提交 `google-tts-tokens.json`、`voice-state.json`、`voice-config.json` 或 `out/`
