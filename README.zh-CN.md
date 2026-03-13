@@ -25,6 +25,20 @@
   - Gemini TTS 使用 `GOOGLE_API_KEY`
   - Google Cloud TTS 使用 OAuth 凭证
 
+为什么需要 `ffmpeg`：
+
+- Gemini TTS 返回的是原始 PCM 音频，不是可以直接发送的语音文件
+- 插件会在本地用 `ffmpeg` 把 PCM 转成可用格式
+- 手动 `/gtts` 输出会转成 `mp3`
+- Telegram 自动语音回复会转成 `ogg/opus`，因为这是 Telegram 语音气泡最稳的格式
+
+这里的 `ogg/opus` 是做什么的：
+
+- `ogg` 是封装格式
+- `opus` 是里面的语音编码
+- Telegram 的 voice note 最适合用 `ogg/opus`，这样更容易显示成语音气泡，而不是普通音频文件
+- 这一步只处理插件本地生成的音频文件，不是拿来执行任意 shell 任务
+
 ## 安装
 
 在插件目录中执行：
@@ -115,5 +129,6 @@ node ./src/oauth-setup.mjs /path/to/client_secret_*.json
 - 如果回复内容是 JSON，只会朗读 `response` 字段
 - `/new`、`/autovoice` 这类 slash 指令的回复不会自动转语音
 - Telegram 语音气泡由插件在文字发送成功后直接补发
+- Gemini 音频会从 PCM 转成 `ogg/opus` 发送语音气泡，手动文件输出则转成 `mp3`
 - Gemini 请求使用 `x-goog-api-key` 请求头，不把 API key 放在 URL 中
 - 不要提交 `google-tts-tokens.json`、`voice-state.json`、`voice-config.json` 或 `out/`
