@@ -1,0 +1,10 @@
+{
+  "autoVoiceAccounts": ["your-bot-account-id"],
+  "autoVoiceModel": "gemini-2.5-flash-preview-tts",
+  "accounts": {
+    "your-bot-account-id": {
+      "defaultVoice": "Leda",
+      "defaultStyle": "请用温柔、专业的心理咨询师口吻，像在面对面轻声说话。以静静聆听、不过度打扰的方式回应，语气不评判，带着温和的好奇与陪伴感，更像真实对话，不像朗读稿件。节奏自然，句间留一点呼吸感。"
+    }
+  }
+}

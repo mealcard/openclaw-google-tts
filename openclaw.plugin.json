@@ -1,0 +1,11 @@
+{
+  "id": "google-tts",
+  "name": "Google TTS",
+  "description": "Gemini and Google Cloud TTS plugin with Telegram auto voice replies",
+  "version": "0.1.0",
+  "configSchema": {
+    "type": "object",
+    "additionalProperties": false,
+    "properties": {}
+  }
+}
